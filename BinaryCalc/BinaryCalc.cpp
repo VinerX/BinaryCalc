@@ -10,7 +10,6 @@ public:
     bool negative = false;
 
     //Блок конструкторов
-
     // Задание строкой
     BNumber(std::string number10) {
         bools = convert(number10);
@@ -59,25 +58,46 @@ public:
     }
     //без учета знака
     bool isBigger(BNumber second) {
-        for (int i = 0; i < size - 1; i++) {
+        //std::cout << "Bigger check";
+        //print();
+        //second.print();
+        for (int i = 0; i < size - 1 - 1; i++) {
             if (bools[i] > second.bools[i]) {
                 return true;
             }
         }
+
+        // Кейс наименьшего
+        if (second.bools[size - 2] == false) {
+            if (second.negative) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
         return false;
+        
+    }
+        
+        
+    
+    bool isZero() {
+        if (negative) {
+            return false;
+        }
+        for (int i = 0; i < size - 1; i++) {
+            if (bools[i]){
+                return false;
+            }
+        }
+        return true;
     }
     //Возвращает в виде дополнительного кода
     BNumber getAdditional() {
-        std::cout << "NBefore: ";
-        print();
         BNumber subtrahend = getReversed();
-        subtrahend.negative = negative;
-        std::cout << "NRevesed: ";
-        subtrahend.print();
         subtrahend = BNumber::sumSame(subtrahend, BNumber(1), subtrahend.negative);
         subtrahend.negative = negative;
-        std::cout << "NWith1: ";
-        subtrahend.print();
         return subtrahend;
     }
 
@@ -110,7 +130,7 @@ public:
     }
 
     //Блок счета
-    //Сложение при одинаковом знакеss
+    //Сложение при одинаковом знаке
     static BNumber sumSame(BNumber first, BNumber second, bool ignoreLimit = false, bool negative = false) {
         BNumber timedBNumber;
         timedBNumber.negative = negative;
@@ -145,23 +165,14 @@ public:
     static BNumber substractSame(BNumber first, BNumber second, bool negative = false) {
         if (first.isBigger(second)) {
             BNumber subtrahend = second.getAdditional();
-            std::cout << "First and Additional"<<std::endl;
-            first.print();
-            subtrahend.print();
             subtrahend = BNumber::sumSame(first, subtrahend, true);
-            std::cout << "Nfinal: ";
-            subtrahend.print();
+            subtrahend.negative = first.negative;
             return subtrahend;
         }
         else {
             BNumber subtrahend = first.getAdditional();
-            std::cout << "Second and Additional"<< std::endl;
             subtrahend = BNumber::sumSame(second, subtrahend, true);
-            second.print();
-            subtrahend.print();
-            subtrahend.negative = !subtrahend.negative;
-            std::cout << "Nfinal: ";
-            subtrahend.print();
+            subtrahend.negative = second.negative;
             return subtrahend;
         }
 
@@ -227,6 +238,12 @@ public:
     static BNumber multiply(BNumber first, BNumber second) {
         BNumber timedBnumber;
         BNumber timedBnumber2;
+
+        //Кейс 0
+        if (first.isZero() || second.isZero() ){
+            return BNumber(0);
+        }
+
         for (int i = size - 2; i >= 0; i--) {
             //Это 1
             if (second.bools[i] == true) {
@@ -266,10 +283,13 @@ public:
         int number = 0;
         for (int i = size - 2; i >= 0; i--) {
             number += timedBnumer.bools[i] * pow(2, size - 2 - i);
-
         }
         if (timedBnumer.negative == true) {
             number *= -1;
+            //Кейс наименьшего
+            if (number == 0) {
+                number = pow(2, size) / -2;
+            }
         }
         return number;
     }
@@ -291,7 +311,7 @@ public:
 
 class Tester {
 public:
-    static void count(int first, int second, char operation) {
+    static void count(int first, int second, char operation, int expectedResult=0) {
         BNumber firstB = BNumber::decToBin(first);
         BNumber secondB = BNumber::decToBin(second);
         BNumber resultB;
@@ -308,15 +328,24 @@ public:
             resultB = BNumber::multiply(firstB, secondB);
             break;
         }
+        
 
-        std::cout << "Dec: (" << first << ") " << operation << " (" << second << ")" << std::endl;
-        std::cout << "Bin:" << std::endl;
-        firstB.print();
-        secondB.print();
-        std::cout << "Result bin:" << std::endl;
-        resultB.print();
-        std::cout << "Result dec:" << std::endl;
-        std::cout << BNumber::binToDec(resultB) << std::endl << std::endl;
+        
+        if (BNumber::binToDec(resultB) == expectedResult)
+        {
+            std::cout << "+++"<<std::endl;
+        }
+        else {
+            std::cout << "alert!" << std::endl;
+            std::cout << "Dec: (" << first << ") " << operation << " (" << second << ")" << std::endl;
+            std::cout << "Bin:" << std::endl;
+            firstB.print();
+            secondB.print();
+            std::cout << "Result bin:" << std::endl;
+            resultB.print();
+            std::cout << "Result dec:" << std::endl;
+            std::cout << BNumber::binToDec(resultB) << std::endl << std::endl;
+        }
     }
     static void startTesting() {
         int first, second;
@@ -345,28 +374,24 @@ public:
 
     }
     static void autoTesting() {
-        //  for (int i = 0; i >= -128; i--) {
-        ///      BNumber::decToBin(i).print();
-        //      std::cout << i<<std::endl;
-         // }
+        count(-128, 1, '+',-127);
 
+        count(126, 1, '+',127);
+        count(127, 1, '-',126);
+        count(126, -127, '+',-1);
+        count(126, 125, '-',1);
+        count(-128, 1, '+',-127);
+        count(-127, 1, '-',-128);
 
-        count(-128, 1, '+');
+        count(1, 1, '*',1);
+        count(-1, 1, '*',-1);
+        count(1, -1, '*',-1);
+        count(-1, -1, '*',1);
 
-        count(126, 1, '+');
-        count(127, 1, '-');
-        count(127, -1, '+');
+        count(-128, 0, '*',0);
+        count(5, 5, '*', 25);
+        count(-2,64, '*', -128);
 
-
-        count(-128, 1, '+');
-        count(-127, 1, '-');
-
-
-        count(1, 1, '*');
-        count(-1, 1, '*');
-        count(1, -1, '*');
-        count(-1, -1, '*');
-        count(-128, 0, '*');
     }
 
 
