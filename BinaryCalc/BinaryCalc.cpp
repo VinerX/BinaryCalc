@@ -66,6 +66,21 @@ public:
         }
         return false;
     }
+    //Возвращает в виде дополнительного кода
+    BNumber getAdditional() {
+        std::cout << "NBefore: ";
+        print();
+        BNumber subtrahend = getReversed();
+        subtrahend.negative = negative;
+        std::cout << "NRevesed: ";
+        subtrahend.print();
+        subtrahend = BNumber::sumSame(subtrahend, BNumber(1), subtrahend.negative);
+        subtrahend.negative = negative;
+        std::cout << "NWith1: ";
+        subtrahend.print();
+        return subtrahend;
+    }
+
     // Конверт ввода в виде строки
     std::array<bool, size - 1> convert(std::string number10) {
         if (number10.size() != size) {
@@ -129,19 +144,24 @@ public:
     //Вычитание при одинаковом знаке
     static BNumber substractSame(BNumber first, BNumber second, bool negative = false) {
         if (first.isBigger(second)) {
-            BNumber subtrahend = second.getReversed();
-            subtrahend = BNumber::sumSame(subtrahend, BNumber(1), true);
+            BNumber subtrahend = second.getAdditional();
+            std::cout << "First and Additional"<<std::endl;
+            first.print();
+            subtrahend.print();
             subtrahend = BNumber::sumSame(first, subtrahend, true);
-            //second.print();
-            //subtrahend.removeLeft();
+            std::cout << "Nfinal: ";
+            subtrahend.print();
             return subtrahend;
         }
         else {
-            BNumber subtrahend = first.getReversed();
-            subtrahend = BNumber::sumSame(subtrahend, BNumber(1), true);
+            BNumber subtrahend = first.getAdditional();
+            std::cout << "Second and Additional"<< std::endl;
             subtrahend = BNumber::sumSame(second, subtrahend, true);
-            //subtrahend.removeLeft();
+            second.print();
+            subtrahend.print();
             subtrahend.negative = !subtrahend.negative;
+            std::cout << "Nfinal: ";
+            subtrahend.print();
             return subtrahend;
         }
 
@@ -231,7 +251,6 @@ public:
         BNumber timedBnumer;
         if (number < 0) {
             timedBnumer.negative = true;
-            number += 1;
         }
 
         for (int i = size - 2; i >= 0; i--) {
@@ -251,7 +270,6 @@ public:
         }
         if (timedBnumer.negative == true) {
             number *= -1;
-            number -= 1;
         }
         return number;
     }
@@ -332,12 +350,7 @@ public:
         //      std::cout << i<<std::endl;
          // }
 
-          //std::cout<< BNumber::binToDec(BNumber(-128));
 
-        BNumber::decToBin(-0).print();
-        BNumber::decToBin(-1).print();
-        BNumber::decToBin(-127).print();
-        BNumber::decToBin(-128).print();
         count(-128, 1, '+');
 
         count(126, 1, '+');
@@ -349,7 +362,11 @@ public:
         count(-127, 1, '-');
 
 
-
+        count(1, 1, '*');
+        count(-1, 1, '*');
+        count(1, -1, '*');
+        count(-1, -1, '*');
+        count(-128, 0, '*');
     }
 
 
