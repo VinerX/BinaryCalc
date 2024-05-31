@@ -357,7 +357,7 @@ public:
         top = newNode;
     }
 
-    // удалить верхний элемент
+    // удаление верхнего элемента
     void pop() { 
         if (top == nullptr) {
             throw std::underflow_error("Stack underflow: no elements to pop");
@@ -461,10 +461,38 @@ public:
 //Вспомогательный класс
 class Tester {
 public:
+    
     static void info() {
         std::cout <<"Size is "<< size << std::endl;
     }
-    static void count(int first, int second, char operation, int expectedResult = 0) {
+
+    static void count(int first, int second, char operation) {
+        BNumber firstB = BNumber::decToBin(first);
+        BNumber secondB = BNumber::decToBin(second);
+        BNumber resultB;
+        switch (operation)
+        {
+        case '+':
+            //firstB.print();
+            resultB = BNumber::sum(firstB, secondB);
+            break;
+        case '-':
+            resultB = BNumber::substract(firstB, secondB);
+            break;
+        case '*':
+            resultB = BNumber::multiply(firstB, secondB);
+            break;
+        } 
+        std::cout << "Dec: (" << first << ") " << operation << " (" << second << ")" << std::endl;
+        std::cout << "Bin:" << std::endl;
+        firstB.print();
+        secondB.print();
+        std::cout << "Result bin:" << std::endl;
+        resultB.print();
+        std::cout << "Result dec:" << std::endl;
+        std::cout << BNumber::binToDec(resultB) << std::endl << std::endl;
+    }
+    static void count(int first, int second, char operation, int expectedResult) {
         BNumber firstB = BNumber::decToBin(first);
         BNumber secondB = BNumber::decToBin(second);
         BNumber resultB;
@@ -500,13 +528,38 @@ public:
             std::cout << BNumber::binToDec(resultB) << std::endl << std::endl;
         }
     }
+    static void countReg(std::string reg) {
+        Calculator calc;
+        BNumber result = calc.evaluatePostfix(reg);
+
+        std::cout << "Reg: " << reg << std::endl;
+        std::cout << "Bin: "; result.print();
+        std::cout << "Dec: " << BNumber::binToDec(result) << std::endl;
+    }
+    static void countReg(std::string reg, int expectedResult) {
+        Calculator calc;
+        BNumber result = calc.evaluatePostfix(reg);
+
+
+        int realResult = BNumber::binToDec(result);
+        if (realResult == expectedResult) {
+            std::cout << "+++" << std::endl;
+        }
+        else {
+            std::cout << "Alert! " << std::endl;
+            std::cout << "Reg: " << reg << std::endl;
+            std::cout << "Bin: "; result.print();
+            std::cout << "Dec: " << BNumber::binToDec(result);
+        }
+    }
+    
     static void userTesting() {
         int first, second;
         char operation;
         while (true) {
             try
             {
-                std::cout << "Enter two numbers (example: 1 3) less than " << pow(2, size) / 2 - 1 << "And greater than " << -(pow(2, size) / 2) << std::endl;
+                std::cout << "Enter two numbers (example: 1 3) being less than " << pow(2, size) / 2 - 1 << "And greater than " << -(pow(2, size) / 2) << std::endl;
                 std::cin >> first >> second;
                 std::cout << "Enter operation +,-,* (example: +)" << std::endl;
                 std::cin >> operation;
@@ -523,11 +576,45 @@ public:
             if (operation == '0') {
                 break;
             }
+            system("cls");
+        }
+        system("cls");
+        std::cin.clear(); // на случай, если предыдущий ввод завершился с ошибкой
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    }
+    static void userTestingCalc() {
+        std::string reg;
+        char operation;
+        while (true) {
+            try
+            {
+                std::cout << "Enter expression with numbers (and intermediate values) being less or equal than " << pow(2, size) / 2 - 1 << " and greater or equal than " << -(pow(2, size) / 2) << std::endl;
+                std::getline(std::cin, reg);
+
+            }
+            catch (const std::exception&)
+            {
+                std::cout << "Error, incorrect imput";
+                continue;
+            }
+
+            countReg(reg);
+            std::cout << "enter 0 to exit or any letter to continue" << std::endl;
+            std::cin >> operation;
+            if (operation == '0') {
+                break;
+            }
+            system("cls");
+            std::cin.clear(); // на случай, если предыдущий ввод завершился с ошибкой
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
     }
+    
+    
     static void autoTesting() {
-        
+
         // Граничные значения
         count(3, 4, '-', -1);
         count(63, 2, '*', 126);
@@ -559,26 +646,7 @@ public:
         count(-75, -25, '-', -50);
         count(-75, -25, '+', -100);
         count(127, 126, '-', 1);
-    } 
-    
-    static void countReg(std::string reg, int expectedResult = 0) {
-        Calculator calc;
-        std::cout << std::endl;
-        BNumber result = calc.evaluatePostfix(reg);
-
-        
-        int realResult = BNumber::binToDec(result);
-        if (realResult == expectedResult) {
-            std::cout << "+++" << std::endl;
-        }
-        else {
-            std::cout << "Alert!" << std::endl;
-            std::cout << "Reg: " << reg << std::endl;
-            result.print();
-            std::cout << BNumber::binToDec(result);
-        }
     }
-    
     static void autoTestingCalc() {
 
        
@@ -587,6 +655,9 @@ public:
         countReg("1 1 -", 0);
         countReg("1 2 *", 2);
 
+        // Отрицательные числа
+        countReg("-1 -1 *", 1);
+        countReg("10 -4 2 * -", 18); //10-(-4)*2
         // Несколько операций
         countReg("1 3 2 * +", 7); // (1 + (3*2))
         countReg("3 4 - 3 2 * *", -6); // ( (3-4) * (3*2) )
@@ -606,8 +677,12 @@ public:
 int main()
 {
     Tester::info();
-    Tester::autoTesting();
-    Tester::autoTestingCalc();
+    // Авто тесты - +++ если тест пройден, иначе лог ошибки
+    Tester::autoTesting(); // Тестирование отдельных операций
+    Tester::autoTestingCalc(); // Тестирование выражений
+
+
+    Tester::userTestingCalc();
 }
 
 // ToDo 
