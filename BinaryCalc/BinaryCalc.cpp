@@ -60,7 +60,7 @@ public:
     //без учета знака
     bool isBigger(BNumber second) {
         for (int i = 0; i < size - 1 - 1; i++) {
-            //std::cout << i <<" sad@@sasd";
+
             if (bools[i] > second.bools[i]) {
                 
                 return true;
@@ -101,7 +101,7 @@ public:
     //Возвращает в виде дополнительного кода
     BNumber getAdditional() {
         BNumber subtrahend = getReversed();
-        subtrahend = BNumber::sumSame(subtrahend, BNumber(1), subtrahend.negative);
+        subtrahend = BNumber::sumSame(subtrahend, BNumber(1), subtrahend.negative, true);
         subtrahend.negative = negative;
         return subtrahend;
     }
@@ -114,7 +114,6 @@ public:
 
         std::array<bool, size - 1> timedBools;
         for (int i = 0; i < size - 1; i++) {
-            //std::cout << number10[size - 1 - i] <<" " << std::endl;
             char lastn = number10[size - 1 - i];
             if (lastn == '0' || lastn == '1') {
                 timedBools[size - 2 - i] = charToBool(lastn);
@@ -196,8 +195,7 @@ public:
             timedBNumber.bools[i] = timedSum;
             
         }
-        //std::cout << timedAddition <<" "<< 1 * ignoreLimit;
-        if (timedAddition > 0 && !ignoreLimit) {
+        if (timedAddition > 0 && !ignoreLimit  && !negative) {
             throw std::invalid_argument("Limit was crossed during sum operation ");
         }
         return timedBNumber;
@@ -208,14 +206,14 @@ public:
         if (first.isBigger(second)) {
 
             BNumber subtrahend = second.getAdditional();
-            subtrahend = BNumber::sumSame(first, subtrahend);
+            subtrahend = BNumber::sumSame(first, subtrahend, first.negative, true);
             subtrahend.negative = first.negative;
             return subtrahend;
         }
         else {
 
             BNumber subtrahend = first.getAdditional();
-            subtrahend = BNumber::sumSame(second, subtrahend);
+            subtrahend = BNumber::sumSame(second, subtrahend, second.negative, true);
             
             if (!subtrahend.isZero()) {
                 subtrahend.negative = true;
@@ -304,14 +302,10 @@ public:
         for (int i = size - 2; i >= 0; i--) {
             //Это 1
             if (second.bools[i] == true) {
-                timedBnumber.print();
-                
                 timedBnumber2 = first;
                 timedBnumber2.addZeroRight(size - 2 - i);
-                timedBnumber2.print();
                 timedBnumber = BNumber::sumSame(timedBnumber, timedBnumber2);
                 
-                std::cout << std::endl;
             }
         }
         timedBnumber.negative = first.negative != second.negative;
@@ -697,8 +691,8 @@ int main()
 {
     Tester::info();
     // Авто тесты - +++ если тест пройден, иначе лог ошибки
-    //Tester::autoTesting(); // Тестирование отдельных операций
-    //Tester::autoTestingCalc(); // Тестирование выражений
+    Tester::autoTesting(); // Тестирование отдельных операций
+    Tester::autoTestingCalc(); // Тестирование выражений
 
 
     Tester::userTestingCalc();
