@@ -88,22 +88,30 @@ public:
     }
     //без учета знака
     bool isBigger(BNumber second) {
-        //std::cout << "Bigger check";
-        //print();
-        //second.print();
+       // print(); second.print();
+        //std::cout << binToDec(second);
         for (int i = 0; i < size - 1 - 1; i++) {
+            //std::cout << i <<" sad@@sasd";
             if (bools[i] > second.bools[i]) {
+                
                 return true;
             }
-        }
+            else if (bools[i] < second.bools[i]){
 
-        // Кейс наименьшего
+                return false;
+            }
+        }
+        // Кейс наименьшего (Пример -128)
+      //  std::cout << 1*second.bools[size - 2] <<std::endl;
+        //std::cout << 1*bools[size - 2] << std::endl;
         if (second.bools[size - 2] == false) {
             if (second.negative) {
                 return false;
             }
             else {
+
                 return true;
+               
             }
         }
         return false;
@@ -186,23 +194,34 @@ public:
         }
 
         if (timedAddition > 0 && !ignoreLimit) {
-            std::cout << "Error, number is too large" << std::endl;
+            /*
+            std::cout << "SUM: Error, number is too large" << std::endl;
+            std::cout << binToDec(first)<<" ";
+            first.print();
+            std::cout << binToDec(second) << " ";
+            second.print();
+            timedBNumber.print();
+            */
+
         }
         return timedBNumber;
     }
 
     //Вычитание при одинаковом знаке
     static BNumber substractSame(BNumber first, BNumber second, bool negative = false) {
+        //std::cout << "Additional";
         if (first.isBigger(second)) {
+
             BNumber subtrahend = second.getAdditional();
             subtrahend = BNumber::sumSame(first, subtrahend, true);
             subtrahend.negative = first.negative;
             return subtrahend;
         }
         else {
+
             BNumber subtrahend = first.getAdditional();
             subtrahend = BNumber::sumSame(second, subtrahend, true);
-            subtrahend.negative = second.negative;
+            subtrahend.negative = true;
             return subtrahend;
         }
 
@@ -289,14 +308,6 @@ public:
         return timedBnumber;
 
     }
-
-
-
-
-
-
-
-
     // Для мониторинга
     void print() {
         if (negative) {
@@ -382,7 +393,6 @@ private:
         case '*':
             resultB = BNumber::multiply(a, b);
             break;
-        
         default:
             throw std::invalid_argument("Invalid operation. Allowed operations: +, -, *.");
         }
@@ -409,13 +419,17 @@ public:
                 BNumber a = stack.peek();
                 stack.pop();
 
-
-                stack.push(performOperation(a, b, token[0])); // выполняем операцию
+                std::cout << "Operation:" << token[0]<<std::endl;
+                std::cout << BNumber::binToDec(a) << " ";  a.print();
+                std::cout << BNumber::binToDec(b) << " ";  b.print();
+                BNumber tb = performOperation(a, b, token[0]);
+                std::cout << "Result:" << BNumber::binToDec(tb)<<" "; tb.print();
+                stack.push(tb); // выполняем операцию
+                
             }
             else { // если встретили число
                 try {
                     int decimalValue = std::stoi(token); // преобразуем в число
-                    std::cout <<"String to: *"<< token << "* Number to : *" << decimalValue<<"*" << std::endl;
                     stack.push(BNumber::decToBin(decimalValue)); // добавляем в стек
                 }
                 catch (...) {
@@ -443,6 +457,9 @@ public:
 //Вспомогательный класс
 class Tester {
 public:
+    static void info() {
+        std::cout <<"Size is "<< size << std::endl;
+    }
     static void count(int first, int second, char operation, int expectedResult = 0) {
         BNumber firstB = BNumber::decToBin(first);
         BNumber secondB = BNumber::decToBin(second);
@@ -507,6 +524,7 @@ public:
     }
     static void autoTesting() {
         // Граничные значения
+        count(3, 4, '-', -1);
 
         // Нижние
         count(-128, 1, '+', -127);
@@ -536,12 +554,45 @@ public:
         count(-75, -25, '-', -50);
         count(-75, -25, '+', -100);
     } 
-    static void autoTestingCalc() {
+    
+    static void countReg(std::string reg, int expectedResult = 0) {
         Calculator calc;
+        std::cout << std::endl;
+        BNumber result = calc.evaluatePostfix(reg);
+
         
-        BNumber result = calc.evaluatePostfix("-5 5 *");
-        result.print();
-        std::cout<<BNumber::binToDec(result);
+        int realResult = BNumber::binToDec(result);
+        if (realResult == expectedResult) {
+            std::cout << "+++" << std::endl;
+        }
+        else {
+            std::cout << "Alert!" << std::endl;
+            std::cout << "Reg: " << reg << std::endl;
+            result.print();
+            std::cout << BNumber::binToDec(result);
+        }
+    }
+    
+    static void autoTestingCalc() {
+
+       
+        //Базовые операции
+        countReg("1 1 +", 2);
+        countReg("1 1 -", 0);
+        countReg("1 2 *", 2);
+
+        // Несколько операций
+        countReg("1 3 2 * +", 7); // (1 + (3*2))
+        countReg("3 4 - 3 2 * *", -6); // ( (3-4) * (3*2) )
+
+
+
+
+
+
+        countReg("-5 5 *", -25);
+        countReg("1 1 *", 1);
+
     }
 
 
@@ -549,7 +600,9 @@ public:
 
 int main()
 {
-    Tester::autoTestingCalc();
+    Tester::info();
+    Tester::autoTesting();
+    //Tester::autoTestingCalc();
 }
 
 // ToDo 
