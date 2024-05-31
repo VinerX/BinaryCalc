@@ -221,7 +221,9 @@ public:
 
             BNumber subtrahend = first.getAdditional();
             subtrahend = BNumber::sumSame(second, subtrahend, true);
-            subtrahend.negative = true;
+            if (!subtrahend.isZero()) {
+                subtrahend.negative = true;
+            }
             return subtrahend;
         }
 
@@ -419,11 +421,11 @@ public:
                 BNumber a = stack.peek();
                 stack.pop();
 
-                std::cout << "Operation:" << token[0]<<std::endl;
-                std::cout << BNumber::binToDec(a) << " ";  a.print();
-                std::cout << BNumber::binToDec(b) << " ";  b.print();
+               // std::cout << "Operation:" << token[0]<<std::endl;
+              //  std::cout << BNumber::binToDec(a) << " ";  a.print();
+             //   std::cout << BNumber::binToDec(b) << " ";  b.print();
                 BNumber tb = performOperation(a, b, token[0]);
-                std::cout << "Result:" << BNumber::binToDec(tb)<<" "; tb.print();
+             //   std::cout << "Result:" << BNumber::binToDec(tb)<<" "; tb.print();
                 stack.push(tb); // выполняем операцию
                 
             }
@@ -601,8 +603,8 @@ public:
 int main()
 {
     Tester::info();
-    Tester::autoTesting();
-    //Tester::autoTestingCalc();
+    //Tester::autoTesting();
+    Tester::autoTestingCalc();
 }
 
 // ToDo 
