@@ -101,3 +101,7 @@ BinaryCalc/x64/Debug/binarycalc.obj.enc
 .vs/BinaryCalc/v17/Browse.VC.db
 .vs/BinaryCalc/v17/.suo
 *.json
+*.json
+*.db
+.vs/BinaryCalc/v17/.suo
+*.db
