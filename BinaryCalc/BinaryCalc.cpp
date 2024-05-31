@@ -35,6 +35,36 @@ public:
             bools[i] = false;
         }
     }
+    //Блок переводов
+    static BNumber decToBin(int number) {
+        BNumber timedBnumer;
+        if (number < 0) {
+            timedBnumer.negative = true;
+        }
+
+        for (int i = size - 2; i >= 0; i--) {
+            timedBnumer.bools[i] = number % 2;
+            number /= 2;
+            //timedBnumer.print();
+        }
+        return timedBnumer;
+
+    }
+
+    static int binToDec(BNumber timedBnumer) {
+        int number = 0;
+        for (int i = size - 2; i >= 0; i--) {
+            number += timedBnumer.bools[i] * pow(2, size - 2 - i);
+        }
+        if (timedBnumer.negative == true) {
+            number *= -1;
+            //Кейс наименьшего
+            if (number == 0) {
+                number = pow(2, size) / -2;
+            }
+        }
+        return number;
+    }
 
     bool charToBool(char a) {
         if (a == '1') {
@@ -116,7 +146,7 @@ public:
 
             }
             else {
-                std::cout << lastn << "Error, incorrect digit replaced by 0" << std::endl;
+                std::cout << lastn << " Error, incorrect digit replaced by 0" << std::endl;
                 timedBools[size - 2 - i] = 0;
             }
         }
@@ -263,36 +293,6 @@ public:
 
 
 
-    //Блок переводов
-    static BNumber decToBin(int number) {
-        BNumber timedBnumer;
-        if (number < 0) {
-            timedBnumer.negative = true;
-        }
-
-        for (int i = size - 2; i >= 0; i--) {
-            timedBnumer.bools[i] = number % 2;
-            number /= 2;
-            //timedBnumer.print();
-        }
-        return timedBnumer;
-
-    }
-
-    static int binToDec(BNumber timedBnumer) {
-        int number = 0;
-        for (int i = size - 2; i >= 0; i--) {
-            number += timedBnumer.bools[i] * pow(2, size - 2 - i);
-        }
-        if (timedBnumer.negative == true) {
-            number *= -1;
-            //Кейс наименьшего
-            if (number == 0) {
-                number = pow(2, size) / -2;
-            }
-        }
-        return number;
-    }
 
 
 
@@ -308,10 +308,142 @@ public:
         std::cout << std::endl;
     }
 };
+// 2 Лабараторная
 
+//Единица Стека
+class Node {
+public:
+    BNumber data; // число
+    Node* next; // ссылка на следующий
+
+    Node(const BNumber& data) : data(data), next(nullptr) {} // конструктор
+};
+
+//Стек
+class Stack {
+private:
+    Node* top; // верхний элемент в стеке
+
+public:
+    Stack() : top(nullptr) {} //конструктор
+
+    ~Stack() { // деструктор
+        while (top != nullptr) {
+            Node* temp = top;
+            top = top->next;
+            delete temp;
+        }
+    }
+
+    // добавление элемента
+    void push(const BNumber& num) { 
+        Node* newNode = new Node(num);
+        newNode->next = top;
+        top = newNode;
+    }
+
+    // удалить верхний элемент
+    void pop() { 
+        if (top == nullptr) {
+            throw std::underflow_error("Stack underflow: no elements to pop");
+        }
+        Node* temp = top;
+        top = top->next;
+        delete temp;
+    }
+
+    //Посмотреть верхний элемент
+    BNumber peek() const { 
+        if (top == nullptr) {
+            throw std::underflow_error("Stack underflow: no elements to peek");
+        }
+        return top->data;
+    }
+
+    // проверка пустоты
+    bool isEmpty() const { 
+        return top == nullptr;
+    }
+};
+
+#include <sstream>
+class Calculator {
+private:
+    BNumber performOperation(const BNumber& a, const BNumber& b, char op) {
+        BNumber resultB;
+        switch (op)
+        {
+        case '+':
+            resultB = BNumber::sum(a, b);
+            break;
+        case '-':
+            resultB = BNumber::substract(a, b);
+            break;
+        case '*':
+            resultB = BNumber::multiply(a, b);
+            break;
+        
+        default:
+            throw std::invalid_argument("Invalid operation. Allowed operations: +, -, *.");
+        }
+        return resultB;
+    }
+
+public:
+    BNumber evaluatePostfix(const std::string& expression) {
+        std::istringstream iss(expression); // делим строку на токены
+        std::string token; // токен
+        Stack stack;
+
+        while (iss >> token) { // пробегаемся по токенам
+            if (token == "+" || token == "-" || token == "*") { // если встретили арифмитическое действие
+                if (stack.isEmpty()) { // стек пустой?
+                    throw std::runtime_error("Invalid postfix expression: insufficient operands for operation " + token);
+                }
+                BNumber b = stack.peek(); // получаем верхний элемент из стека
+                stack.pop(); // удаляем элемент
+
+                if (stack.isEmpty()) { // стек пустой?
+                    throw std::runtime_error("Invalid postfix expression: insufficient operands for operation " + token);
+                }
+                BNumber a = stack.peek();
+                stack.pop();
+
+
+                stack.push(performOperation(a, b, token[0])); // выполняем операцию
+            }
+            else { // если встретили число
+                try {
+                    int decimalValue = std::stoi(token); // преобразуем в число
+                    std::cout <<"String to: *"<< token << "* Number to : *" << decimalValue<<"*" << std::endl;
+                    stack.push(BNumber::decToBin(decimalValue)); // добавляем в стек
+                }
+                catch (...) {
+                    throw std::invalid_argument("Invalid token in expression: " + token);
+                }
+            }
+        }
+
+        if (stack.isEmpty()) { // обработка ошибки
+            throw std::runtime_error("Invalid postfix expression: no result in the stack");
+        }
+
+        BNumber result = stack.peek(); // очищение стека, получение результата
+        stack.pop();
+
+        if (!stack.isEmpty()) { // обработка ошибки
+            throw std::runtime_error("Invalid postfix expression: more than one result remains on the stack");
+        }
+
+        return result;
+    }
+};
+
+
+//Вспомогательный класс
 class Tester {
 public:
-    static void count(int first, int second, char operation, int expectedResult=0) {
+    static void count(int first, int second, char operation, int expectedResult = 0) {
         BNumber firstB = BNumber::decToBin(first);
         BNumber secondB = BNumber::decToBin(second);
         BNumber resultB;
@@ -328,12 +460,12 @@ public:
             resultB = BNumber::multiply(firstB, secondB);
             break;
         }
-        
 
-        
+
+
         if (BNumber::binToDec(resultB) == expectedResult)
         {
-            std::cout << "+++"<<std::endl;
+            std::cout << "+++" << std::endl;
         }
         else {
             std::cout << "alert!" << std::endl;
@@ -347,7 +479,7 @@ public:
             std::cout << BNumber::binToDec(resultB) << std::endl << std::endl;
         }
     }
-    static void startTesting() {
+    static void userTesting() {
         int first, second;
         char operation;
         while (true) {
@@ -377,44 +509,50 @@ public:
         // Граничные значения
 
         // Нижние
-        count(-128, 1, '+',-127);
+        count(-128, 1, '+', -127);
         count(-127, 1, '-', -128);
 
         // Верхние
         count(127, 1, '-', 126);
         count(126, 1, '+', 127);
 
-        count(126, -127, '+',-1);
-        count(126, 125, '-',1);
-        count(-128, 1, '+',-127);
+        count(126, -127, '+', -1);
+        count(126, 125, '-', 1);
+        count(-128, 1, '+', -127);
 
         // Знаки умножения
-        count(1, 1, '*',1);
-        count(-1, 1, '*',-1);
-        count(1, -1, '*',-1);
-        count(-1, -1, '*',1);
+        count(1, 1, '*', 1);
+        count(-1, 1, '*', -1);
+        count(1, -1, '*', -1);
+        count(-1, -1, '*', 1);
 
-        count(-128, 0, '*',0);
+        count(-128, 0, '*', 0);
         count(5, 5, '*', 25);
-        count(-2,64, '*', -128);
+        count(-2, 64, '*', -128);
 
         count(75, 25, '-', 50);
         count(75, 25, '+', 100);
 
         count(-75, -25, '-', -50);
         count(-75, -25, '+', -100);
+    } 
+    static void autoTestingCalc() {
+        Calculator calc;
+        
+        BNumber result = calc.evaluatePostfix("-5 5 *");
+        result.print();
+        std::cout<<BNumber::binToDec(result);
     }
 
 
 };
-class Node {
-public:
-    BNumber data; // число
-    Node* next; // ссылка на следующий
-    Node(const BNumber& data) : data(data), next(nullptr) {} // конструктор
-};
 
 int main()
 {
-    Tester::autoTesting();
+    Tester::autoTestingCalc();
 }
+
+// ToDo 
+// Работа с вводом
+// Приватность
+// Лимиты дочинить
