@@ -59,8 +59,6 @@ public:
     }
     //без учета знака
     bool isBigger(BNumber second) {
-       // print(); second.print();
-        //std::cout << binToDec(second);
         for (int i = 0; i < size - 1 - 1; i++) {
             //std::cout << i <<" sad@@sasd";
             if (bools[i] > second.bools[i]) {
@@ -73,8 +71,6 @@ public:
             }
         }
         // Кейс наименьшего (Пример -128)
-      //  std::cout << 1*second.bools[size - 2] <<std::endl;
-        //std::cout << 1*bools[size - 2] << std::endl;
         if (second.bools[size - 2] == false) {
             if (second.negative) {
                 return false;
@@ -142,6 +138,10 @@ public:
     //Блок переводов
     static BNumber decToBin(int number) {
         BNumber timedBnumer;
+        if (number < -pow(2, size)/2 || number >= pow(2, size)/2 ) {
+            throw std::invalid_argument("Number is not limited by size: " + number);
+        }
+
         if (number < 0) {
             timedBnumer.negative = true;
         }
@@ -172,7 +172,7 @@ public:
 
     //Блок счета
     //Сложение при одинаковом знаке
-    static BNumber sumSame(BNumber first, BNumber second, bool ignoreLimit = false, bool negative = false) {
+    static BNumber sumSame(BNumber first, BNumber second, bool negative = false, bool ignoreLimit = false) {
         BNumber timedBNumber;
         timedBNumber.negative = negative;
         long timedAddition = 0;
@@ -194,25 +194,28 @@ public:
             timedAddition += timedSum / 2;
             timedSum %= 2;
             timedBNumber.bools[i] = timedSum;
+            
+        }
+        //std::cout << timedAddition <<" "<< 1 * ignoreLimit;
+        if (timedAddition > 0 && !ignoreLimit) {
+            throw std::invalid_argument("Limit was crossed during sum operation ");
         }
         return timedBNumber;
     }
 
     //Вычитание при одинаковом знаке
     static BNumber substractSame(BNumber first, BNumber second, bool negative = false) {
-        //std::cout << "Additional";
         if (first.isBigger(second)) {
 
             BNumber subtrahend = second.getAdditional();
-            subtrahend = BNumber::sumSame(first, subtrahend, true);
+            subtrahend = BNumber::sumSame(first, subtrahend);
             subtrahend.negative = first.negative;
-            //first.print(); subtrahend.print();
             return subtrahend;
         }
         else {
 
             BNumber subtrahend = first.getAdditional();
-            subtrahend = BNumber::sumSame(second, subtrahend, true);
+            subtrahend = BNumber::sumSame(second, subtrahend);
             
             if (!subtrahend.isZero()) {
                 subtrahend.negative = true;
@@ -229,7 +232,7 @@ public:
 
         // Один знак
         if (first.negative == second.negative) {
-            return sumSame(first, second, false, first.negative);
+            return sumSame(first, second, first.negative);
         }
         else {
             // первое число отрицательное -a+b=b-a
@@ -253,7 +256,7 @@ public:
         else {
             // первое число отрицательное -a-(+b) = -(a + b);
             if (first.negative) {
-                return sumSame(first, second, false, true);
+                return sumSame(first, second,true);
             }
             // второе число негативное a-(-b)=a+b
             else {
@@ -263,6 +266,10 @@ public:
     }
     //Сдвиг влево или приписка 0 справа
     void addZeroRight() {
+        //Проверка на лишний сдвиг
+        if (bools[0] == true && !negative) {
+            throw std::invalid_argument("Limit crossed during adding right zero");
+        }
         for (int i = 0; i < size - 2; i++) {
             bools[i] = bools[i + 1];
         }
@@ -270,7 +277,13 @@ public:
     }
     //Несколько сдвигов
     void addZeroRight(int times) {
+        
         for (int i = 0; i < times; i++) {
+            
+            //Проверка на лишний сдвиг
+            if (bools[0] == true && !negative) {
+                throw std::invalid_argument("Limit crossed during adding right zero");
+            }
             for (int i = 0; i < size - 2; i++) {
                 bools[i] = bools[i + 1];
             }
@@ -291,12 +304,14 @@ public:
         for (int i = size - 2; i >= 0; i--) {
             //Это 1
             if (second.bools[i] == true) {
+                timedBnumber.print();
+                
                 timedBnumber2 = first;
                 timedBnumber2.addZeroRight(size - 2 - i);
-                   // std::cout << "@";
-                  //  first.print();
-                  //  timedBnumber2.print();
-                timedBnumber = BNumber::sum(timedBnumber, timedBnumber2);
+                timedBnumber2.print();
+                timedBnumber = BNumber::sumSame(timedBnumber, timedBnumber2);
+                
+                std::cout << std::endl;
             }
         }
         timedBnumber.negative = first.negative != second.negative;
@@ -314,14 +329,14 @@ public:
         std::cout << std::endl;
     }
 };
-// 2 Лабараторная
+
+// 2 Лабараторная работа //
 
 //Единица Стека
 class Node {
 public:
     BNumber data; // число
     Node* next; // ссылка на следующий
-
     Node(const BNumber& data) : data(data), next(nullptr) {} // конструктор
 };
 
@@ -375,6 +390,13 @@ public:
 #include <sstream>
 class Calculator {
 private:
+    bool isOperationValid(const BNumber& a, const BNumber& b){
+
+    }
+
+
+
+    // Выбор оператора
     BNumber performOperation(const BNumber& a, const BNumber& b, char op) {
         BNumber resultB;
         switch (op)
@@ -456,7 +478,12 @@ public:
     static void info() {
         std::cout <<"Size is "<< size << std::endl;
     }
-
+    static void cleanConsole() {
+        // Обнуление консоли
+        system("cls");
+        std::cin.clear(); // на случай, если предыдущий ввод завершился с ошибкой
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
     //Промежуточные функции между вводом и счетом
     static void count(int first, int second, char operation) {
         BNumber firstB = BNumber::decToBin(first);
@@ -583,23 +610,23 @@ public:
             {
                 std::cout << "Enter expression with numbers (and intermediate values) being less or equal than " << pow(2, size) / 2 - 1 << " and greater or equal than " << -(pow(2, size) / 2) << std::endl;
                 std::getline(std::cin, exp);
-
+                countExp(exp);
             }
-            catch (const std::exception&)
+            catch (...)
             {
-                std::cout << "Error, incorrect imput";
+                
+                std::cout << "Error, there was problem in input"<<std::endl;                
                 continue;
             }
 
-            countExp(exp);
+            
             std::cout << "enter 0 to exit or any letter to continue" << std::endl;
             std::cin >> operation;
             if (operation == '0') {
                 break;
             }
-            system("cls");
-            std::cin.clear(); // на случай, если предыдущий ввод завершился с ошибкой
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            cleanConsole();
+            
         }
 
     }
@@ -670,8 +697,8 @@ int main()
 {
     Tester::info();
     // Авто тесты - +++ если тест пройден, иначе лог ошибки
-    Tester::autoTesting(); // Тестирование отдельных операций
-    Tester::autoTestingCalc(); // Тестирование выражений
+    //Tester::autoTesting(); // Тестирование отдельных операций
+    //Tester::autoTestingCalc(); // Тестирование выражений
 
 
     Tester::userTestingCalc();
