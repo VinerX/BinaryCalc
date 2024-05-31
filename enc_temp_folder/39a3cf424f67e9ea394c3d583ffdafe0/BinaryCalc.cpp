@@ -195,6 +195,18 @@ public:
             timedSum %= 2;
             timedBNumber.bools[i] = timedSum;
         }
+
+        if (timedAddition > 0 && !ignoreLimit) {
+            /*
+            std::cout << "SUM: Error, number is too large" << std::endl;
+            std::cout << binToDec(first)<<" ";
+            first.print();
+            std::cout << binToDec(second) << " ";
+            second.print();
+            timedBNumber.print();
+            */
+
+        }
         return timedBNumber;
     }
 
