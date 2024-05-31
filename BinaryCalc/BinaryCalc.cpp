@@ -215,12 +215,14 @@ public:
             BNumber subtrahend = second.getAdditional();
             subtrahend = BNumber::sumSame(first, subtrahend, true);
             subtrahend.negative = first.negative;
+            //first.print(); subtrahend.print();
             return subtrahend;
         }
         else {
 
             BNumber subtrahend = first.getAdditional();
             subtrahend = BNumber::sumSame(second, subtrahend, true);
+            
             if (!subtrahend.isZero()) {
                 subtrahend.negative = true;
             }
@@ -278,7 +280,7 @@ public:
     //Несколько сдвигов
     void addZeroRight(int times) {
         for (int i = 0; i < times; i++) {
-            for (int i = 1; i < size - 2; i++) {
+            for (int i = 0; i < size - 2; i++) {
                 bools[i] = bools[i + 1];
             }
             bools[size - 2] = false;
@@ -300,8 +302,8 @@ public:
             if (second.bools[i] == true) {
                 timedBnumber2 = first;
                 timedBnumber2.addZeroRight(size - 2 - i);
-                //    std::cout << "@";
-                //    timedBnumber.print();
+                   // std::cout << "@";
+                  //  first.print();
                   //  timedBnumber2.print();
                 timedBnumber = BNumber::sum(timedBnumber, timedBnumber2);
             }
@@ -422,11 +424,11 @@ public:
                 stack.pop();
 
                // std::cout << "Operation:" << token[0]<<std::endl;
-              //  std::cout << BNumber::binToDec(a) << " ";  a.print();
-             //   std::cout << BNumber::binToDec(b) << " ";  b.print();
-                BNumber tb = performOperation(a, b, token[0]);
-             //   std::cout << "Result:" << BNumber::binToDec(tb)<<" "; tb.print();
-                stack.push(tb); // выполняем операцию
+                //std::cout << BNumber::binToDec(a) << " ";  a.print();
+              // std::cout << BNumber::binToDec(b) << " ";  b.print();
+               BNumber tb = performOperation(a, b, token[0]);
+              // std::cout << "Result:" << BNumber::binToDec(tb)<<" "; tb.print();
+                stack.push(tb ); // выполняем операцию
                 
             }
             else { // если встретили число
@@ -525,9 +527,10 @@ public:
 
     }
     static void autoTesting() {
+        
         // Граничные значения
         count(3, 4, '-', -1);
-
+        count(63, 2, '*', 126);
         // Нижние
         count(-128, 1, '+', -127);
         count(-127, 1, '-', -128);
@@ -555,6 +558,7 @@ public:
 
         count(-75, -25, '-', -50);
         count(-75, -25, '+', -100);
+        count(127, 126, '-', 1);
     } 
     
     static void countReg(std::string reg, int expectedResult = 0) {
@@ -588,6 +592,9 @@ public:
         countReg("3 4 - 3 2 * *", -6); // ( (3-4) * (3*2) )
         countReg("2 5 * 3 4 * +", 22); // 2*5+3*4
 
+        //countReg("-5 2 3 2 * 1 - -", -15); // -5 * 2 - (3*2-1)
+        countReg("127 63 3 1 - * -", 1); // 127 - 63  * (3-1)
+
         countReg("-5 5 *", -25);
         countReg("1 1 *", 1);
 
@@ -599,7 +606,7 @@ public:
 int main()
 {
     Tester::info();
-    //Tester::autoTesting();
+    Tester::autoTesting();
     Tester::autoTestingCalc();
 }
 
