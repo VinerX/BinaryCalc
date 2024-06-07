@@ -8,6 +8,12 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Dmitry\\source\\repos\\BinCalcPavel\\BinCalcPavel\\BinCalcPavel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\stdexcept||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\vcruntime_exception.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -17,7 +23,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -25,13 +31,37 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "stdexcept",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\stdexcept",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\stdexcept",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\stdexcept",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\stdexcept",
+              "ViewState": "AQIAACMAAAAAAAAAAAAnwDkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-05-31T21:02:27.532Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "vcruntime_exception.h",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\vcruntime_exception.h",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\vcruntime_exception.h",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\vcruntime_exception.h",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.40.33807\\include\\vcruntime_exception.h",
+              "ViewState": "AQIAACcAAAAAAAAAAAAnwD0AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-05-31T21:01:27.95Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "BinaryCalc.cpp",
               "DocumentMoniker": "C:\\Users\\Dmitry\\source\\repos\\BinaryCalc\\BinaryCalc\\BinaryCalc.cpp",
               "RelativeDocumentMoniker": "BinaryCalc\\BinaryCalc.cpp",
-              "ToolTip": "C:\\Users\\Dmitry\\source\\repos\\BinaryCalc\\BinaryCalc\\BinaryCalc.cpp*",
-              "RelativeToolTip": "BinaryCalc\\BinaryCalc.cpp*",
-              "ViewState": "AQIAAOQBAAAAAAAAAAAiwB0CAAAwAAAA",
+              "ToolTip": "C:\\Users\\Dmitry\\source\\repos\\BinaryCalc\\BinaryCalc\\BinaryCalc.cpp",
+              "RelativeToolTip": "BinaryCalc\\BinaryCalc.cpp",
+              "ViewState": "AQIAAKgAAAAAAAAAAAAAALsAAAAKAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-05-30T13:49:45.224Z",
               "EditorCaption": ""
@@ -44,10 +74,9 @@
               "RelativeDocumentMoniker": "..\\BinCalcPavel\\BinCalcPavel\\BinCalcPavel.cpp",
               "ToolTip": "C:\\Users\\Dmitry\\source\\repos\\BinCalcPavel\\BinCalcPavel\\BinCalcPavel.cpp",
               "RelativeToolTip": "..\\BinCalcPavel\\BinCalcPavel\\BinCalcPavel.cpp",
-              "ViewState": "AQIAADsBAAAAAAAAAAAAAGABAAA1AAAA",
+              "ViewState": "AQIAAMwAAAAAAAAAAAAAAKUAAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-05-30T14:17:03.135Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-05-30T14:17:03.135Z"
             }
           ]
         }

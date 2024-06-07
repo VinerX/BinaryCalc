@@ -98,6 +98,17 @@ public:
         }
         return true;
     }
+    bool isSmallest() {
+        if (!negative) {
+            return false;
+        }
+        for (int i = 1; i < size - 1; i++) {
+            if (bools[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
     //Возвращает в виде дополнительного кода
     BNumber getAdditional() {
         BNumber subtrahend = getReversed();
@@ -173,6 +184,8 @@ public:
     //Сложение при одинаковом знаке
     static BNumber sumSame(BNumber first, BNumber second, bool negative = false, bool ignoreLimit = false) {
         BNumber timedBNumber;
+        //std::cout << "First: "; first.print();
+        //std::cout << "Second: "; second.print();
         timedBNumber.negative = negative;
         long timedAddition = 0;
         for (int i = size - 2; i >= 0; i--) {
@@ -203,26 +216,42 @@ public:
 
     //Вычитание при одинаковом знаке
     static BNumber substractSame(BNumber first, BNumber second, bool negative = false) {
+        BNumber subtrahend;
         if (first.isBigger(second)) {
 
-            BNumber subtrahend = second.getAdditional();
-            subtrahend = BNumber::sumSame(first, subtrahend, first.negative, true);
-            subtrahend.negative = first.negative;
-            return subtrahend;
+            if (second.isSmallest()) {
+                subtrahend = first.getAdditional();
+                if (!subtrahend.isZero()) {
+                    subtrahend.negative = true;
+                }
+            }
+            else {
+                subtrahend = second.getAdditional();
+                subtrahend = BNumber::sumSame(first, subtrahend, first.negative, true);
+                subtrahend.negative = first.negative;
+            }
+
+
         }
         else {
-
-            BNumber subtrahend = first.getAdditional();
-            subtrahend = BNumber::sumSame(second, subtrahend, second.negative, true);
-            
-            if (!subtrahend.isZero()) {
-                subtrahend.negative = true;
+            if (first.isSmallest()) {
+                subtrahend = second.getAdditional();
+                if (!subtrahend.isZero()) {
+                    subtrahend.negative = true;
+                }
             }
-            return subtrahend;
+            else {
+                subtrahend = first.getAdditional();
+                subtrahend = BNumber::sumSame(second, subtrahend, second.negative, true);
+
+                if (!subtrahend.isZero()) {
+                    subtrahend.negative = true;
+                }
+            }
         }
 
 
-
+        return subtrahend;
     }
 
     //Сложение
@@ -606,10 +635,9 @@ public:
                 std::getline(std::cin, exp);
                 countExp(exp);
             }
-            catch (...)
-            {
-                
-                std::cout << "Error, there was problem in input"<<std::endl;                
+            catch (std::exception e)
+            {   
+                std::cout << "Error, there was problem in input: "<< e.what()<<std::endl;                
                 continue;
             }
 
@@ -627,6 +655,11 @@ public:
     
     
     static void autoTesting() {
+        count(-128, 100, '+', -28); 
+        count(100, -128, '+', -28);
+        count(-128, -100, '-', -28);
+
+
 
         // Граничные значения
         count(3, 4, '-', -1);
@@ -634,6 +667,7 @@ public:
         // Нижние
         count(-128, 1, '+', -127);
         count(-127, 1, '-', -128);
+        count(-127, -1, '+', -128);
 
         // Верхние
         count(127, 1, '-', 126);
@@ -659,6 +693,9 @@ public:
         count(-75, -25, '-', -50);
         count(-75, -25, '+', -100);
         count(127, 126, '-', 1);
+
+
+
     }
     static void autoTestingCalc() {
 
