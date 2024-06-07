@@ -34,14 +34,7 @@
 *.db-shm
 *.db
 *.db
-.vs/BinaryCalc/v17/ipch/AutoPCH/c5356e4d44c5fcf6/VCTMP1412_252125.BINARYCALC.00000000.ipch
-.vs/BinaryCalc/v17/ipch/AutoPCH/689c229f536bef8f/BINCALCPAVEL.ipch
-.vs/BinaryCalc/v17/DocumentLayout.json
-.vs/BinaryCalc/v17/Browse.VC.opendb
-.vs/BinaryCalc/v17/Browse.VC.db-wal
-.vs/BinaryCalc/v17/Browse.VC.db
-.vs/BinaryCalc/v17/.suo
-.vs/BinaryCalc/FileContentIndex/79c3f86f-e42f-4447-b910-29c0e7c0c109.vsidx
+.vs/
 BinaryCalc/x64/Debug/BinaryCalc.exe.recipe
 BinaryCalc/x64/Debug/BinaryCalc.ilk
 BinaryCalc/x64/Debug/BinaryCalc.log
