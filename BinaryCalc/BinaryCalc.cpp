@@ -355,70 +355,95 @@ public:
 
 // 2 Лабараторная работа //
 
-//Единица Стека
+// Узел списка
 class Node {
 public:
     BNumber data; // число
-    Node* next; // ссылка на следующий
+    Node* next; // ссылка на следующий элемент
     Node(const BNumber& data) : data(data), next(nullptr) {} // конструктор
 };
 
-//Стек
-class Stack {
+
+// Односвязный список с ограниченным фукнционалом под задачу
+class LinkedList {
 private:
-    Node* top; // верхний элемент в стеке
+    Node* head; // первый элемент в списке
 
 public:
-    Stack() : top(nullptr) {} //конструктор
+    LinkedList() : head(nullptr) {} // конструктор
 
-    ~Stack() { // деструктор
-        while (top != nullptr) {
-            Node* temp = top;
-            top = top->next;
+    ~LinkedList() { // деструктор
+        while (head != nullptr) {
+            Node* temp = head;
+            head = head->next;
             delete temp;
         }
     }
 
-    // добавление элемента
-    void push(const BNumber& num) { 
+    // добавление элемента в начало списка
+    void push_front(const BNumber& num) { 
         Node* newNode = new Node(num);
-        newNode->next = top;
-        top = newNode;
+        newNode->next = head;
+        head = newNode;
     }
 
-    // удаление верхнего элемента
-    void pop() { 
-        if (top == nullptr) {
-            throw std::underflow_error("Stack underflow: no elements to pop");
+    // удаление первого элемента списка
+    void pop_front() { 
+        if (head == nullptr) {
+            throw std::underflow_error("LinkedList underflow: no elements to remove");
         }
-        Node* temp = top;
-        top = top->next;
+        Node* temp = head;
+        head = head->next;
         delete temp;
     }
 
-    //Посмотреть верхний элемент
-    BNumber peek() const { 
-        if (top == nullptr) {
-            throw std::underflow_error("Stack underflow: no elements to peek");
+    // посмотреть первый элемент списка
+    BNumber peek_front() const { 
+        if (head == nullptr) {
+            throw std::underflow_error("LinkedList underflow: no elements to get");
         }
-        return top->data;
+        return head->data;
     }
 
     // проверка пустоты
     bool isEmpty() const { 
-        return top == nullptr;
+        return head == nullptr;
+    }
+};
+
+// Стек с ограниченным функционалом под задачу
+class Stack {
+private:
+    LinkedList list; // список для хранения элементов стека
+public:
+    Stack() {} // конструктор
+
+    ~Stack() {} // деструктор
+
+    // добавление элемента
+    void push(const BNumber& num) { 
+        list.push_front(num);
+    }
+
+    // удаление верхнего элемента
+    void pop() { 
+        list.pop_front();
+    }
+
+    // посмотреть верхний элемент
+    BNumber peek() const { 
+        return list.peek_front();
+    }
+
+    // проверка пустоты
+    bool isEmpty() const { 
+        return list.isEmpty();
     }
 };
 
 #include <sstream>
 class Calculator {
 private:
-    bool isOperationValid(const BNumber& a, const BNumber& b){
-
-    }
-
-
-
     // Выбор оператора
     BNumber performOperation(const BNumber& a, const BNumber& b, char op) {
         BNumber resultB;
